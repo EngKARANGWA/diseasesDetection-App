@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -23,7 +23,9 @@ class _LoginPageState extends State<LoginPage> {
           style: TextStyle(color: Colors.white), // Set text color to white
         ),
         backgroundColor: Colors.green,
-        iconTheme: const IconThemeData(color: Colors.white), // Set icon color to white
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ), // Set icon color to white
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -81,10 +83,44 @@ class _LoginPageState extends State<LoginPage> {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             setState(() => isLoading = true);
-                            // TODO: Implement authentication logic
-                            Future.delayed(const Duration(seconds: 2), () {
+
+                            // Static credentials
+                            final credentials = {
+                              'farmer@gmail.com': 'farmer@123',
+                              'agronomist@gmail.com': 'agronomist@123',
+                              'admin@gmail.com': 'admin@123',
+                            };
+
+                            Future.delayed(const Duration(seconds: 1), () {
                               setState(() => isLoading = false);
-                              // Navigate to home/dashboard after successful login
+
+                              if (credentials[email.trim()] ==
+                                  password.trim()) {
+                                // Navigate to respective dashboard
+                                if (email.trim() == 'farmer@gmail.com') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/farmer_dashboard',
+                                  );
+                                } else if (email.trim() ==
+                                    'agronomist@gmail.com') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/agronomist_dashboard',
+                                  );
+                                } else if (email.trim() == 'admin@gmail.com') {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    '/admin_dashboard',
+                                  );
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Invalid email or password'),
+                                  ),
+                                );
+                              }
                             });
                           }
                         },

@@ -3,13 +3,17 @@ import 'screens/landingpage.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/signup.dart';
 import 'screens/auth/forgotpassword.dart';
+import 'screens/Dashboards/farmer.dart'; // Import the FarmerDashboard screen
+import 'screens/Dashboards/farmer_home.dart'; // Import the FarmerHome screen
+import 'screens/Dashboards/agronomist.dart';
+import 'screens/Dashboards/admin.dart';
 
 void main() {
   runApp(const PotatoDiseaseApp());
 }
 
 class PotatoDiseaseApp extends StatelessWidget {
-  const PotatoDiseaseApp({Key? key}) : super(key: key);
+  const PotatoDiseaseApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +28,9 @@ class PotatoDiseaseApp extends StatelessWidget {
         '/login': (context) => const LoginPage(),
         '/signup': (context) => const SignupPage(),
         '/forgotpassword': (context) => const ForgotPasswordPage(),
+        '/farmer_dashboard': (context) => const FarmerHome(), // Use FarmerHome with bottom navigation
+        '/agronomist_dashboard': (context) => const AgronomistDashboard(),
+        '/admin_dashboard': (context) => const AdminDashboard(),
       },
       debugShowCheckedModeBanner: false,
     );
