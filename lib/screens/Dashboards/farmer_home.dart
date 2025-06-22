@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'farmer.dart';
+import '../navibar/historypage.dart';
+import '../navibar/supplier_page.dart';
+import '../navibar/profile_page.dart';
 
 class FarmerHome extends StatefulWidget {
   const FarmerHome({Key? key}) : super(key: key);
@@ -14,9 +17,9 @@ class _FarmerHomeState extends State<FarmerHome> {
   static final List<Widget> _screens = <Widget>[
     FarmerDashboard(),
     _DetectScreen(),
-    _HistoryScreen(),
-    _SuppliersScreen(),
-    _ProfileScreen(),
+    HistoryPage(),
+    SupplierPage(),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -71,50 +74,17 @@ class _DetectScreen extends StatelessWidget {
         title: const Text('Detect Disease', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            },
+          ),
+        ],
       ),
       body: const Center(child: Text('Detect Disease Screen (to be implemented)')),
-    );
-  }
-}
-
-class _HistoryScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Disease History', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: const Center(child: Text('Disease History Screen (to be implemented)')),
-    );
-  }
-}
-
-class _SuppliersScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pesticide Suppliers', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: const Center(child: Text('Suppliers Screen (to be implemented)')),
-    );
-  }
-}
-
-class _ProfileScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile & Settings', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: const Center(child: Text('Profile Screen (to be implemented)')),
     );
   }
 } 

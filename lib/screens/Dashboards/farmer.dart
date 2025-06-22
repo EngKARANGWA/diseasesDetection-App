@@ -20,6 +20,7 @@ class FarmerDashboard extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined, color: Colors.white),
@@ -27,6 +28,12 @@ class FarmerDashboard extends StatelessWidget {
               // TODO: Navigate to notifications
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            },
+          )
         ],
       ),
       body: SingleChildScrollView(
