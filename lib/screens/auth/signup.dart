@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../models/user.dart';
+import '../../services/db_helper.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key}) : super(key: key);
+  const SignupPage({super.key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -12,6 +14,12 @@ class _SignupPageState extends State<SignupPage> {
   String email = '';
   String password = '';
   String confirmPassword = '';
+  String names = '';
+  String telephone = '';
+  String district = '';
+  String sector = '';
+  String cell = '';
+  String village = '';
   bool isLoading = false;
 
   @override
@@ -39,6 +47,67 @@ class _SignupPageState extends State<SignupPage> {
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 24),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Names',
+                    prefixIcon: Icon(Icons.person),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.isEmpty ? 'Enter your names' : null,
+                  onSaved: (value) => names = value ?? '',
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Telephone',
+                    prefixIcon: Icon(Icons.phone),
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.phone,
+                  validator: (value) => value == null || value.isEmpty ? 'Enter your telephone number' : null,
+                  onSaved: (value) => telephone = value ?? '',
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'District',
+                    prefixIcon: Icon(Icons.location_city),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.isEmpty ? 'Enter your district' : null,
+                  onSaved: (value) => district = value ?? '',
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Sector',
+                    prefixIcon: Icon(Icons.location_on),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.isEmpty ? 'Enter your sector' : null,
+                  onSaved: (value) => sector = value ?? '',
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Cell',
+                    prefixIcon: Icon(Icons.location_on),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.isEmpty ? 'Enter your cell' : null,
+                  onSaved: (value) => cell = value ?? '',
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'Village',
+                    prefixIcon: Icon(Icons.home),
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) => value == null || value.isEmpty ? 'Enter your village' : null,
+                  onSaved: (value) => village = value ?? '',
+                ),
+                const SizedBox(height: 16),
                 TextFormField(
                   decoration: const InputDecoration(
                     labelText: 'Email',
@@ -91,29 +160,19 @@ class _SignupPageState extends State<SignupPage> {
                 isLoading
                     ? const CircularProgressIndicator()
                     : SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            setState(() => isLoading = true);
-                            // TODO: Implement registration logic
-                            Future.delayed(const Duration(seconds: 2), () {
-                              setState(() => isLoading = false);
-                              // Navigate to login/home after successful signup
-                            });
-                          }
-                        },
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          onPressed: _registerUser,
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(fontSize: 18, color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
@@ -131,5 +190,38 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _registerUser() async {
+    final form = _formKey.currentState;
+    if (form != null && form.validate()) {
+      form.save();
+      setState(() => isLoading = true);
+      final dbHelper = DBHelper();
+      final existingUser = await dbHelper.getUserByEmail(email);
+      if (existingUser != null) {
+        setState(() => isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Email already exists. Please use another email.')),
+        );
+        return;
+      }
+      final user = User(
+        names: names,
+        telephone: telephone,
+        district: district,
+        sector: sector,
+        cell: cell,
+        village: village,
+        email: email,
+        password: password,
+      );
+      await dbHelper.insertUser(user);
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration successful! Please login.')),
+      );
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 }

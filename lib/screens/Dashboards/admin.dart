@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../auth/agronomistregistor.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -11,10 +12,11 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _screens = <Widget>[
-    _OverviewScreen(),
-    _UserManagementScreen(),
-    _ReportsScreen(),
+  static final List<Widget> _screens = <Widget>[
+    const _OverviewScreen(),
+    AgronomistRegisterPage(),
+    const _UserManagementScreen(),
+    const _ReportsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -31,10 +33,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor: Colors.green,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Overview',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_add),
+            label: 'Add Agronomist',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
