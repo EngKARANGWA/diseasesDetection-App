@@ -8,6 +8,7 @@ import 'screens/Dashboards/farmer_home.dart'; // Import the FarmerHome screen
 import 'screens/Dashboards/agronomist.dart';
 import 'screens/Dashboards/admin.dart';
 import 'screens/navibar/historypage.dart';
+import 'screens/navibar/camera_page.dart';
 
 void main() {
   runApp(const PotatoDiseaseApp());
@@ -33,6 +34,7 @@ class PotatoDiseaseApp extends StatelessWidget {
         '/agronomist_dashboard': (context) => const AgronomistDashboard(),
         '/admin_dashboard': (context) => const AdminDashboard(),
         '/history': (context) => const HistoryPage(),
+        '/camera': (context) => const CameraPage(),
       },
       debugShowCheckedModeBanner: false,
     );

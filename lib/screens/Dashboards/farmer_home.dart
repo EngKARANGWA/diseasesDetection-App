@@ -3,6 +3,7 @@ import 'farmer.dart';
 import '../navibar/historypage.dart';
 import '../navibar/supplier_page.dart';
 import '../navibar/profile_page.dart';
+import '../navibar/camera_page.dart';
 
 class FarmerHome extends StatefulWidget {
   const FarmerHome({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _FarmerHomeState extends State<FarmerHome> {
 
   static final List<Widget> _screens = <Widget>[
     FarmerDashboard(),
-    _DetectScreen(),
+    CameraPage(),
     HistoryPage(),
     SupplierPage(),
     ProfilePage(),
@@ -61,30 +62,6 @@ class _FarmerHomeState extends State<FarmerHome> {
           ),
         ],
       ),
-    );
-  }
-}
-
-// Placeholder screens for other tabs
-class _DetectScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detect Disease', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
-        iconTheme: const IconThemeData(color: Colors.white),
-        automaticallyImplyLeading: false,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
-            onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-            },
-          ),
-        ],
-      ),
-      body: const Center(child: Text('Detect Disease Screen (to be implemented)')),
     );
   }
 } 

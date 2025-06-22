@@ -1,29 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../navibar/profile_page.dart';
 
-class AgronomistDashboard extends StatelessWidget {
+class AgronomistDashboard extends StatefulWidget {
   const AgronomistDashboard({super.key});
+
+  @override
+  State<AgronomistDashboard> createState() => _AgronomistDashboardState();
+}
+
+class _AgronomistDashboardState extends State<AgronomistDashboard> {
+  int _selectedIndex = 0;
+
+  List<Widget> get _screens => [
+    _DashboardScreen(
+      buildSummaryCards: _buildSummaryCards,
+      buildDiseaseChart: _buildDiseaseChart,
+    ),
+    _FarmerManagementScreen(buildFarmerManagement: _buildFarmerManagement),
+    _ReportScreen(buildReportGeneration: _buildReportGeneration),
+    const ProfilePage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[50],
-      appBar: AppBar(
-        title: const Text('Agronomist Dashboard', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.green,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildSummaryCards(),
-          const SizedBox(height: 20),
-          _buildDiseaseChart(context),
-          const SizedBox(height: 20),
-          _buildFarmerManagement(context),
-          const SizedBox(height: 20),
-          _buildReportGeneration(context),
+      body: _screens[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.people),
+            label: 'Farmers',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assessment),
+            label: 'Reports',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
         ],
       ),
     );
@@ -201,6 +232,79 @@ class AgronomistDashboard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// --- Tab Screens ---
+
+class _DashboardScreen extends StatelessWidget {
+  final Widget Function() buildSummaryCards;
+  final Widget Function(BuildContext) buildDiseaseChart;
+  const _DashboardScreen({required this.buildSummaryCards, required this.buildDiseaseChart});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green[50],
+      appBar: AppBar(
+        title: const Text('Agronomist Dashboard', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.green,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          buildSummaryCards(),
+          const SizedBox(height: 20),
+          buildDiseaseChart(context),
+        ],
+      ),
+    );
+  }
+}
+
+class _FarmerManagementScreen extends StatelessWidget {
+  final Widget Function(BuildContext) buildFarmerManagement;
+  const _FarmerManagementScreen({required this.buildFarmerManagement});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green[50],
+      appBar: AppBar(
+        title: const Text('Manage Farmers', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.green,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: buildFarmerManagement(context),
+      ),
+    );
+  }
+}
+
+class _ReportScreen extends StatelessWidget {
+  final Widget Function(BuildContext) buildReportGeneration;
+  const _ReportScreen({required this.buildReportGeneration});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green[50],
+      appBar: AppBar(
+        title: const Text('Reports', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.green,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: buildReportGeneration(context),
       ),
     );
   }

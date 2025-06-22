@@ -111,7 +111,6 @@ class ProfilePage extends StatelessWidget {
         title,
         style: TextStyle(color: isLogout ? Colors.red : Colors.black87),
       ),
-      trailing: isLogout ? null : const Icon(Icons.arrow_forward_ios, size: 16),
       onTap: onTap,
     );
   }

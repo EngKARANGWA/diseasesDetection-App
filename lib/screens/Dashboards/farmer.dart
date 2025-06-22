@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../navibar/camera_page.dart';
 
 class FarmerDashboard extends StatelessWidget {
   const FarmerDashboard({super.key});
@@ -165,7 +166,10 @@ class FarmerDashboard extends StatelessWidget {
           color: Colors.green,
           title: 'Disease Scan',
           onTap: () {
-            // TODO: Navigate to camera
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CameraPage()),
+            );
           },
         ),
         _buildActionCard(
