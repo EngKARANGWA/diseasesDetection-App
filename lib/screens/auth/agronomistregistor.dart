@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+import '../../services/agro_regstitor.dart';
 
 class AgronomistRegisterPage extends StatefulWidget {
   const AgronomistRegisterPage({Key? key}) : super(key: key);
@@ -29,18 +30,35 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
     }
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState!.validate() && licenseFile != null) {
       _formKey.currentState!.save();
       setState(() => isLoading = true);
-      Future.delayed(const Duration(seconds: 1), () {
+      final agroDb = AgroRegistitor();
+      final existing = await agroDb.getAgronomistByEmail(organizationEmail);
+      if (existing != null) {
         setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invitation link sent to $organizationEmail (functionality placeholder)')),
+          const SnackBar(content: Text('An agronomist with this email already exists.')),
         );
-        _formKey.currentState!.reset();
-        setState(() => licenseFile = null);
-      });
+        return;
+      }
+      final agronomist = Agronomist(
+        names: names,
+        telephone: telephone,
+        district: district,
+        sector: sector,
+        organizationEmail: organizationEmail,
+        licensePath: licenseFile!.path,
+        password: password,
+      );
+      await agroDb.insertAgronomist(agronomist);
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invitation link sent to $organizationEmail (functionality placeholder)')),
+      );
+      _formKey.currentState!.reset();
+      setState(() => licenseFile = null);
     } else if (licenseFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please upload a license/certificate.')),

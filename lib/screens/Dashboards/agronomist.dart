@@ -12,13 +12,10 @@ class AgronomistDashboard extends StatefulWidget {
 class _AgronomistDashboardState extends State<AgronomistDashboard> {
   int _selectedIndex = 0;
 
-  List<Widget> get _screens => [
-    _DashboardScreen(
-      buildSummaryCards: _buildSummaryCards,
-      buildDiseaseChart: _buildDiseaseChart,
-    ),
-    _FarmerManagementScreen(buildFarmerManagement: _buildFarmerManagement),
-    _ReportScreen(buildReportGeneration: _buildReportGeneration),
+  final List<Widget> _screens = [
+    const _DashboardScreen(),
+    const _FarmerManagementScreen(),
+    const _ReportScreen(),
     const ProfilePage(),
   ];
 
@@ -59,17 +56,10 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
       ),
     );
   }
+}
 
-  Widget _buildSummaryCards() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _summaryCard('Farmers', '128', Icons.people, Colors.blue),
-        _summaryCard('Alerts', '5', Icons.warning, Colors.orange),
-        _summaryCard('Reports', '23', Icons.assessment, Colors.purple),
-      ],
-    );
-  }
+class _DashboardScreen extends StatelessWidget {
+  const _DashboardScreen();
 
   Widget _summaryCard(String title, String value, IconData icon, Color color) {
     return Expanded(
@@ -89,6 +79,24 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSummaryCards() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _summaryCard('Farmers', '128', Icons.people, Colors.blue),
+        _summaryCard('Alerts', '5', Icons.warning, Colors.orange),
+        _summaryCard('Reports', '23', Icons.assessment, Colors.purple),
+      ],
+    );
+  }
+
+  BarChartGroupData _makeGroupData(int x, double y, {Color color = Colors.blue}) {
+    return BarChartGroupData(
+      x: x,
+      barRods: [BarChartRodData(toY: y, color: color, width: 22)],
     );
   }
 
@@ -139,7 +147,7 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
                               text = '';
                               break;
                           }
-                          return SideTitleWidget(axisSide: meta.axisSide, child: Text(text, style: style));
+                          return SideTitleWidget(meta: meta, child: Text(text, style: style));
                         },
                       ),
                     ),
@@ -153,10 +161,61 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
     );
   }
 
-  BarChartGroupData _makeGroupData(int x, double y, {Color color = Colors.blue}) {
-    return BarChartGroupData(
-      x: x,
-      barRods: [BarChartRodData(toY: y, color: color, width: 22)],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green[50],
+      appBar: AppBar(
+        title: const Text('Agronomist Dashboard', 
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.green,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          _buildSummaryCards(),
+          const SizedBox(height: 20),
+          _buildDiseaseChart(context),
+        ],
+      ),
+    );
+  }
+}
+
+class _FarmerManagementScreen extends StatefulWidget {
+  const _FarmerManagementScreen();
+
+  @override
+  State<_FarmerManagementScreen> createState() => _FarmerManagementScreenState();
+}
+
+class _FarmerManagementScreenState extends State<_FarmerManagementScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<Map<String, String>> farmers = [
+    {'name': 'John Doe', 'status': '2 new detections'},
+    {'name': 'Jane Smith', 'status': 'No new alerts'},
+    // Add more farmers as needed
+  ];
+
+  List<Map<String, String>> get filteredFarmers {
+    return farmers.where((farmer) =>
+      farmer['name']!.toLowerCase().contains(_searchController.text.toLowerCase())
+    ).toList();
+  }
+
+  Widget _farmerTile(String name, String status) {
+    return ListTile(
+      leading: const CircleAvatar(child: Icon(Icons.person)),
+      title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(status),
+      trailing: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+        child: const Text('Message', style: TextStyle(color: Colors.white)),
+      ),
     );
   }
 
@@ -174,8 +233,22 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            _farmerTile('John Doe', '2 new detections'),
-            _farmerTile('Jane Smith', 'No new alerts'),
+            TextField(
+              controller: _searchController,
+              decoration: const InputDecoration(
+                labelText: 'Search farmer by name',
+                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (_) => setState(() {}),
+            ),
+            const SizedBox(height: 12),
+            ...filteredFarmers.map((farmer) => _farmerTile(farmer['name']!, farmer['status']!)),
+            if (filteredFarmers.isEmpty)
+              const Padding(
+                padding: EdgeInsets.all(24.0),
+                child: Center(child: Text('No farmers found.')),
+              ),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -189,20 +262,26 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
     );
   }
 
-  Widget _farmerTile(String name, String status) {
-    return ListTile(
-      leading: const CircleAvatar(child: Icon(Icons.person)),
-      title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(status),
-      trailing: ElevatedButton(
-        onPressed: () {
-          // TODO: Implement messaging
-        },
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-        child: const Text('Message', style: TextStyle(color: Colors.white)),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.green[50],
+      appBar: AppBar(
+        title: const Text('Manage Farmers', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.green,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: _buildFarmerManagement(context),
       ),
     );
   }
+}
+
+class _ReportScreen extends StatelessWidget {
+  const _ReportScreen();
 
   Widget _buildReportGeneration(BuildContext context) {
     return Card(
@@ -224,9 +303,7 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                // TODO: Implement report generation
-              },
+              onPressed: () {},
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               child: const Text('Generate', style: TextStyle(color: Colors.white)),
             ),
@@ -235,62 +312,6 @@ class _AgronomistDashboardState extends State<AgronomistDashboard> {
       ),
     );
   }
-}
-
-// --- Tab Screens ---
-
-class _DashboardScreen extends StatelessWidget {
-  final Widget Function() buildSummaryCards;
-  final Widget Function(BuildContext) buildDiseaseChart;
-  const _DashboardScreen({required this.buildSummaryCards, required this.buildDiseaseChart});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.green[50],
-      appBar: AppBar(
-        title: const Text('Agronomist Dashboard', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.green,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          buildSummaryCards(),
-          const SizedBox(height: 20),
-          buildDiseaseChart(context),
-        ],
-      ),
-    );
-  }
-}
-
-class _FarmerManagementScreen extends StatelessWidget {
-  final Widget Function(BuildContext) buildFarmerManagement;
-  const _FarmerManagementScreen({required this.buildFarmerManagement});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.green[50],
-      appBar: AppBar(
-        title: const Text('Manage Farmers', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.green,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: buildFarmerManagement(context),
-      ),
-    );
-  }
-}
-
-class _ReportScreen extends StatelessWidget {
-  final Widget Function(BuildContext) buildReportGeneration;
-  const _ReportScreen({required this.buildReportGeneration});
 
   @override
   Widget build(BuildContext context) {
@@ -304,7 +325,7 @@ class _ReportScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: buildReportGeneration(context),
+        child: _buildReportGeneration(context),
       ),
     );
   }

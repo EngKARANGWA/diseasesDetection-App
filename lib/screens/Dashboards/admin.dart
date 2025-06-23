@@ -110,18 +110,30 @@ class _OverviewScreen extends StatelessWidget {
   }
 }
 
-class _UserManagementScreen extends StatelessWidget {
+class _UserManagementScreen extends StatefulWidget {
   const _UserManagementScreen();
 
-  // Mock data for users
-  final List<Map<String, String>> farmers = const [
-    {'name': 'John Doe', 'email': 'farmer@gmail.com', 'password': 'farmer@123'},
-    {'name': 'Jane Smith', 'email': 'jane.s@example.com', 'password': 'password456'},
+  @override
+  State<_UserManagementScreen> createState() => _UserManagementScreenState();
+}
+
+class _UserManagementScreenState extends State<_UserManagementScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedRole = 'All';
+
+  final List<Map<String, String>> allUsers = [
+    {'name': 'John Doe', 'email': 'farmer@gmail.com', 'password': 'farmer@123', 'role': 'Farmer'},
+    {'name': 'Jane Smith', 'email': 'jane.s@example.com', 'password': 'password456', 'role': 'Farmer'},
+    {'name': 'Dr. Emily Carter', 'email': 'agronomist@gmail.com', 'password': 'agronomist@123', 'role': 'Agronomist'},
   ];
 
-  final List<Map<String, String>> agronomists = const [
-    {'name': 'Dr. Emily Carter', 'email': 'agronomist@gmail.com', 'password': 'agronomist@123'},
-  ];
+  List<Map<String, String>> get filteredUsers {
+    return allUsers.where((user) {
+      final matchesRole = _selectedRole == 'All' || user['role'] == _selectedRole;
+      final matchesSearch = user['name']!.toLowerCase().contains(_searchController.text.toLowerCase());
+      return matchesRole && matchesSearch;
+    }).toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,26 +146,60 @@ class _UserManagementScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _buildUserList('Farmers', Icons.eco, farmers),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: const InputDecoration(
+                    labelText: 'Search by name',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: (_) => setState(() {}),
+                ),
+              ),
+              const SizedBox(width: 12),
+              DropdownButton<String>(
+                value: _selectedRole,
+                items: const [
+                  DropdownMenuItem(value: 'All', child: Text('All Roles')),
+                  DropdownMenuItem(value: 'Farmer', child: Text('Farmer')),
+                  DropdownMenuItem(value: 'Agronomist', child: Text('Agronomist')),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRole = value!;
+                  });
+                },
+              ),
+            ],
+          ),
           const SizedBox(height: 20),
-          _buildUserList('Agronomists', Icons.science, agronomists),
+          _buildUserList(filteredUsers),
         ],
       ),
     );
   }
 
-  Widget _buildUserList(String title, IconData icon, List<Map<String, String>> users) {
+  Widget _buildUserList(List<Map<String, String>> users) {
+    if (users.isEmpty) {
+      return const Center(child: Padding(
+        padding: EdgeInsets.all(32.0),
+        child: Text('No users found.'),
+      ));
+    }
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('Users', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ...users.map((user) => ListTile(
-              leading: Icon(icon),
+              leading: Icon(user['role'] == 'Farmer' ? Icons.eco : Icons.science),
               title: Text(user['name']!),
-              subtitle: Text("Email: ${user['email']}\nPassword: ${user['password']}"),
+              subtitle: Text("Email: "+user['email']!+"\nPassword: "+user['password']!+"\nRole: "+user['role']!),
               trailing: IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
               isThreeLine: true,
             )),
