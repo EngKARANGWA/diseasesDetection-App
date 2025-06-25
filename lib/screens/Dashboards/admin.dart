@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import '../auth/agronomistregistor.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -14,7 +13,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   static final List<Widget> _screens = <Widget>[
     const _OverviewScreen(),
-    AgronomistRegisterPage(),
     const _UserManagementScreen(),
     const _ReportsScreen(),
   ];
@@ -39,14 +37,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             icon: Icon(Icons.dashboard),
             label: 'Overview',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_add),
-            label: 'Add Agronomist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'Users',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.people), label: 'Users'),
           BottomNavigationBarItem(
             icon: Icon(Icons.assessment),
             label: 'Reports',
@@ -71,16 +62,27 @@ class _OverviewScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          const Text('System Statistics', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'System Statistics',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 10),
           Row(
             children: [
               _buildStatCard('Farmers', '128', Icons.person, Colors.blue),
-              _buildStatCard('Agronomists', '12', Icons.support_agent, Colors.orange),
+              _buildStatCard(
+                'Agronomists',
+                '12',
+                Icons.support_agent,
+                Colors.orange,
+              ),
             ],
           ),
           const SizedBox(height: 20),
-          const Text('Disease Hotspots', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Disease Hotspots',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 10),
           SizedBox(
             height: 200,
@@ -91,7 +93,12 @@ class _OverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Expanded(
       child: Card(
         child: Padding(
@@ -100,7 +107,13 @@ class _OverviewScreen extends StatelessWidget {
             children: [
               Icon(icon, size: 30, color: color),
               const SizedBox(height: 8),
-              Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(title),
             ],
           ),
@@ -122,15 +135,33 @@ class _UserManagementScreenState extends State<_UserManagementScreen> {
   String _selectedRole = 'All';
 
   final List<Map<String, String>> allUsers = [
-    {'name': 'John Doe', 'email': 'farmer@gmail.com', 'password': 'farmer@123', 'role': 'Farmer'},
-    {'name': 'Jane Smith', 'email': 'jane.s@example.com', 'password': 'password456', 'role': 'Farmer'},
-    {'name': 'Dr. Emily Carter', 'email': 'agronomist@gmail.com', 'password': 'agronomist@123', 'role': 'Agronomist'},
+    {
+      'name': 'John Doe',
+      'email': 'farmer@gmail.com',
+      'password': 'farmer@123',
+      'role': 'Farmer',
+    },
+    {
+      'name': 'Jane Smith',
+      'email': 'jane.s@example.com',
+      'password': 'password456',
+      'role': 'Farmer',
+    },
+    {
+      'name': 'Dr. Emily Carter',
+      'email': 'agronomist@gmail.com',
+      'password': 'agronomist@123',
+      'role': 'Agronomist',
+    },
   ];
 
   List<Map<String, String>> get filteredUsers {
     return allUsers.where((user) {
-      final matchesRole = _selectedRole == 'All' || user['role'] == _selectedRole;
-      final matchesSearch = user['name']!.toLowerCase().contains(_searchController.text.toLowerCase());
+      final matchesRole =
+          _selectedRole == 'All' || user['role'] == _selectedRole;
+      final matchesSearch = user['name']!.toLowerCase().contains(
+        _searchController.text.toLowerCase(),
+      );
       return matchesRole && matchesSearch;
     }).toList();
   }
@@ -139,7 +170,10 @@ class _UserManagementScreenState extends State<_UserManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Management', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'User Management',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -165,7 +199,10 @@ class _UserManagementScreenState extends State<_UserManagementScreen> {
                 items: const [
                   DropdownMenuItem(value: 'All', child: Text('All Roles')),
                   DropdownMenuItem(value: 'Farmer', child: Text('Farmer')),
-                  DropdownMenuItem(value: 'Agronomist', child: Text('Agronomist')),
+                  DropdownMenuItem(
+                    value: 'Agronomist',
+                    child: Text('Agronomist'),
+                  ),
                 ],
                 onChanged: (value) {
                   setState(() {
@@ -184,10 +221,12 @@ class _UserManagementScreenState extends State<_UserManagementScreen> {
 
   Widget _buildUserList(List<Map<String, String>> users) {
     if (users.isEmpty) {
-      return const Center(child: Padding(
-        padding: EdgeInsets.all(32.0),
-        child: Text('No users found.'),
-      ));
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: Text('No users found.'),
+        ),
+      );
     }
     return Card(
       child: Padding(
@@ -195,14 +234,26 @@ class _UserManagementScreenState extends State<_UserManagementScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Users', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ...users.map((user) => ListTile(
-              leading: Icon(user['role'] == 'Farmer' ? Icons.eco : Icons.science),
-              title: Text(user['name']!),
-              subtitle: Text("Email: "+user['email']!+"\nPassword: "+user['password']!+"\nRole: "+user['role']!),
-              trailing: IconButton(icon: const Icon(Icons.edit), onPressed: () {}),
-              isThreeLine: true,
-            )),
+            const Text(
+              'Users',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            ...users.map(
+              (user) => ListTile(
+                leading: Icon(
+                  user['role'] == 'Farmer' ? Icons.eco : Icons.science,
+                ),
+                title: Text(user['name']!),
+                subtitle: Text(
+                  "Email: ${user['email']!}\nPassword: ${user['password']!}\nRole: ${user['role']!}",
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {},
+                ),
+                isThreeLine: true,
+              ),
+            ),
           ],
         ),
       ),
@@ -227,13 +278,19 @@ class _ReportsScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text('Generate detailed reports for regions, diseases, and date ranges.', textAlign: TextAlign.center),
+              const Text(
+                'Generate detailed reports for regions, diseases, and date ranges.',
+                textAlign: TextAlign.center,
+              ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
                 icon: const Icon(Icons.picture_as_pdf),
                 label: const Text('Generate Report'),
                 onPressed: () {},
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),

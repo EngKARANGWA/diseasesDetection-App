@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CameraPage extends StatefulWidget {
-  const CameraPage({Key? key}) : super(key: key);
+  const CameraPage({super.key});
 
   @override
   State<CameraPage> createState() => _CameraPageState();
@@ -88,8 +88,8 @@ class _CameraPageState extends State<CameraPage> {
               onPressed: _imageFile != null ? () {
                 // TODO: Proceed with the selected image (e.g., upload or analyze)
               } : null,
-              child: const Text('Proceed'),
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              child: const Text('Proceed'),
             ),
           ],
         ),

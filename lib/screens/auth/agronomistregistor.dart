@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import '../../services/agro_regstitor.dart';
 
 class AgronomistRegisterPage extends StatefulWidget {
-  const AgronomistRegisterPage({Key? key}) : super(key: key);
+  const AgronomistRegisterPage({super.key});
 
   @override
   State<AgronomistRegisterPage> createState() => _AgronomistRegisterPageState();
@@ -22,7 +22,10 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
   bool isLoading = false;
 
   Future<void> _pickLicenseFile() async {
-    final result = await FilePicker.platform.pickFiles(type: FileType.custom, allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png']);
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+    );
     if (result != null && result.files.single.path != null) {
       setState(() {
         licenseFile = File(result.files.single.path!);
@@ -39,7 +42,9 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
       if (existing != null) {
         setState(() => isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An agronomist with this email already exists.')),
+          const SnackBar(
+            content: Text('An agronomist with this email already exists.'),
+          ),
         );
         return;
       }
@@ -55,10 +60,9 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
       await agroDb.insertAgronomist(agronomist);
       setState(() => isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invitation link sent to $organizationEmail (functionality placeholder)')),
+        const SnackBar(content: Text('Registration successful! Please login.')),
       );
-      _formKey.currentState!.reset();
-      setState(() => licenseFile = null);
+      Navigator.pushReplacementNamed(context, '/login');
     } else if (licenseFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please upload a license/certificate.')),
@@ -70,7 +74,10 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Register Agronomist', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Register Agronomist',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -88,7 +95,9 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     prefixIcon: Icon(Icons.person),
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) => value == null || value.isEmpty ? 'Enter names' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty ? 'Enter names' : null,
                   onSaved: (value) => names = value ?? '',
                 ),
                 const SizedBox(height: 16),
@@ -99,7 +108,11 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.phone,
-                  validator: (value) => value == null || value.isEmpty ? 'Enter telephone number' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter telephone number'
+                              : null,
                   onSaved: (value) => telephone = value ?? '',
                 ),
                 const SizedBox(height: 16),
@@ -109,7 +122,11 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     prefixIcon: Icon(Icons.location_city),
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) => value == null || value.isEmpty ? 'Enter district' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter district'
+                              : null,
                   onSaved: (value) => district = value ?? '',
                 ),
                 const SizedBox(height: 16),
@@ -119,7 +136,11 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     prefixIcon: Icon(Icons.location_on),
                     border: OutlineInputBorder(),
                   ),
-                  validator: (value) => value == null || value.isEmpty ? 'Enter sector' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter sector'
+                              : null,
                   onSaved: (value) => sector = value ?? '',
                 ),
                 const SizedBox(height: 16),
@@ -130,7 +151,11 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
-                  validator: (value) => value == null || value.isEmpty ? 'Enter organization email' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter organization email'
+                              : null,
                   onSaved: (value) => organizationEmail = value ?? '',
                 ),
                 const SizedBox(height: 16),
@@ -145,13 +170,21 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     child: Row(
                       children: [
                         if (licenseFile == null)
-                          const Text('Tap to select file', style: TextStyle(color: Colors.grey)),
+                          const Text(
+                            'Tap to select file',
+                            style: TextStyle(color: Colors.grey),
+                          ),
                         if (licenseFile != null) ...[
-                          if (licenseFile!.path.endsWith('.jpg') || licenseFile!.path.endsWith('.jpeg') || licenseFile!.path.endsWith('.png'))
+                          if (licenseFile!.path.endsWith('.jpg') ||
+                              licenseFile!.path.endsWith('.jpeg') ||
+                              licenseFile!.path.endsWith('.png'))
                             SizedBox(
                               width: 40,
                               height: 40,
-                              child: Image.file(licenseFile!, fit: BoxFit.cover),
+                              child: Image.file(
+                                licenseFile!,
+                                fit: BoxFit.cover,
+                              ),
                             )
                           else
                             const Icon(Icons.picture_as_pdf, color: Colors.red),
@@ -180,20 +213,29 @@ class _AgronomistRegisterPageState extends State<AgronomistRegisterPage> {
                     border: OutlineInputBorder(),
                   ),
                   obscureText: true,
-                  validator: (value) => value == null || value.isEmpty ? 'Enter password' : null,
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Enter password'
+                              : null,
                   onSaved: (value) => password = value ?? '',
                 ),
                 const SizedBox(height: 24),
                 isLoading
                     ? const CircularProgressIndicator()
                     : SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                          onPressed: _submit,
-                          child: const Text('Send Invitation', style: TextStyle(color: Colors.white)),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                        onPressed: _submit,
+                        child: const Text(
+                          'Signup',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
+                    ),
               ],
             ),
           ),

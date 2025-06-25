@@ -3,7 +3,7 @@ import 'screens/landingpage.dart';
 import 'screens/auth/login.dart';
 import 'screens/auth/signup.dart';
 import 'screens/auth/forgotpassword.dart';
-import 'screens/Dashboards/farmer.dart'; // Import the FarmerDashboard screen
+// Import the FarmerDashboard screen
 import 'screens/Dashboards/farmer_home.dart'; // Import the FarmerHome screen
 import 'screens/Dashboards/agronomist.dart';
 import 'screens/Dashboards/admin.dart';

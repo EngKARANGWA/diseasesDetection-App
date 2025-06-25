@@ -6,7 +6,7 @@ import '../navibar/profile_page.dart';
 import '../navibar/camera_page.dart';
 
 class FarmerHome extends StatefulWidget {
-  const FarmerHome({Key? key}) : super(key: key);
+  const FarmerHome({super.key});
 
   @override
   State<FarmerHome> createState() => _FarmerHomeState();
